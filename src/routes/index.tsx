@@ -41,7 +41,7 @@ type ProjectType = "brand" | "website" | "marketing" | "shop";
 type Pace = "chill" | "steady" | "rocket";
 
 function Index() {
-  const [view, setView] = useState<"intake" | "mission">("intake");
+  const [view, setView] = useState<"intake" | "mission">("mission");
 
   return view === "intake" ? (
     <Intake onLaunch={() => setView("mission")} />
