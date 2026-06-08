@@ -436,7 +436,7 @@ function Mission({ onRestart }: { onRestart: () => void }) {
           onClick={onRestart}
           className="text-sm font-bold text-muted-foreground hover:text-foreground rounded-full px-4 py-2 hover:bg-card transition-colors"
         >
-          ↺ Restart demo
+          ↺ Go Back and Edit
         </button>
       </header>
 
@@ -561,7 +561,7 @@ function Mission({ onRestart }: { onRestart: () => void }) {
       </section>
 
       <footer className="mt-10 text-center text-xs text-muted-foreground">
-        Made with <span className="text-coral-foreground">♥</span> by your project team
+        Made with <span className="text-coral-foreground">♥</span> by KaustubhOps
       </footer>
     </main>
   );
