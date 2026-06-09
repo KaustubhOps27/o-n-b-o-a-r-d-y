@@ -25,6 +25,7 @@ import {
   Smile,
   Building2,
   User,
+  type LucideIcon,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -60,7 +61,12 @@ function Intake({ onLaunch }: { onLaunch: () => void }) {
   const [pace, setPace] = useState<Pace | null>(null);
   const [launching, setLaunching] = useState(false);
 
-  const steps = ["hello", "project", "pace", "launch"] as const;
+  const steps = [
+    { key: "hello", label: "Getting Started" },
+    { key: "project", label: "Project Scope" },
+    { key: "pace", label: "Choose Pace" },
+    { key: "launch", label: "Review & Launch" },
+  ] as const;
   const total = steps.length;
 
   const canNext =
@@ -87,17 +93,23 @@ function Intake({ onLaunch }: { onLaunch: () => void }) {
 
         {/* Progress dots */}
         <div className="flex items-center justify-center gap-2 mb-6">
-          {steps.map((_, i) => (
-            <div
-              key={i}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
-                i === step
-                  ? "w-10 bg-primary"
-                  : i < step
-                    ? "w-2.5 bg-mint"
-                    : "w-2.5 bg-border"
-              }`}
-            />
+          {steps.map((s, i) => (
+            <div key={i} className="flex flex-col items-center gap-1.5">
+              <div
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  i === step
+                    ? "w-10 bg-primary"
+                    : i < step
+                      ? "w-2.5 bg-mint"
+                      : "w-2.5 bg-border"
+                }`}
+              />
+              {i === step && (
+                <span className="text-[10px] text-muted-foreground font-medium">
+                  Step {i + 1} of {total}: {s.label}
+                </span>
+              )}
+            </div>
           ))}
         </div>
 
@@ -227,8 +239,16 @@ function Intake({ onLaunch }: { onLaunch: () => void }) {
               <div className="bg-secondary squircle p-5 space-y-2.5 text-sm">
                 <Summary label="Name" value={name || "—"} />
                 <Summary label="Company" value={company || "—"} />
-                <Summary label="Project" value={projectType ?? "—"} />
-                <Summary label="Pace" value={pace ?? "—"} />
+                <Summary
+                  label="Project"
+                  value={projectType ?? "—"}
+                  icon={projectType ? getProjectIcon(projectType) : undefined}
+                />
+                <Summary
+                  label="Pace"
+                  value={pace ?? "—"}
+                  icon={pace ? getPaceIcon(pace) : undefined}
+                />
               </div>
 
               <button
@@ -253,14 +273,14 @@ function Intake({ onLaunch }: { onLaunch: () => void }) {
               <button
                 onClick={() => setStep((s) => Math.max(0, s - 1))}
                 disabled={step === 0}
-                className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground disabled:opacity-30 px-3 py-2 rounded-full transition-colors font-semibold"
+                className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed px-3 py-2 rounded-full transition-all duration-200 font-semibold active:scale-95 hover:bg-card"
               >
                 <ArrowLeft className="size-4" /> Back
               </button>
               <button
                 onClick={() => canNext && setStep((s) => Math.min(total - 1, s + 1))}
                 disabled={!canNext}
-                className="flex items-center gap-2 bg-foreground text-background squircle px-5 py-3 font-display font-bold shadow-pop disabled:opacity-30 disabled:cursor-not-allowed hover:-translate-y-0.5 transition-transform"
+                className="flex items-center gap-2 bg-foreground text-background squircle px-5 py-3 font-display font-bold shadow-pop disabled:opacity-30 disabled:cursor-not-allowed hover:-translate-y-0.5 transition-all duration-200 active:scale-95 active:translate-y-0"
               >
                 Next <ArrowRight className="size-4" />
               </button>
@@ -373,7 +393,7 @@ function IconCard({
   return (
     <button
       onClick={onClick}
-      className={`relative text-left squircle p-4 border-[3px] transition-all duration-200 active:scale-95 hover:-translate-y-1 ${
+      className={`relative text-left squircle p-4 border-[3px] transition-all duration-200 ease-in-out active:scale-[0.98] hover:-translate-y-1 hover:shadow-md ${
         horizontal ? "flex items-center gap-4" : "flex flex-col gap-3"
       } ${
         selected
@@ -397,21 +417,50 @@ function IconCard({
   );
 }
 
-function Summary({ label, value }: { label: string; value: string }) {
+function Summary({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
   return (
     <div className="flex items-center justify-between">
       <span className="text-muted-foreground">{label}</span>
-      <span className="font-bold capitalize">{value}</span>
+      <span className="font-bold capitalize flex items-center gap-2">
+        {icon && <span className="size-4">{icon}</span>}
+        {value}
+      </span>
     </div>
   );
 }
 
+// Helper functions to get icons for summary display
+function getProjectIcon(type: ProjectType): ReactNode {
+  const icons: Record<ProjectType, ReactNode> = {
+    brand: <Palette className="size-4" />,
+    website: <Code2 className="size-4" />,
+    marketing: <Megaphone className="size-4" />,
+    shop: <ShoppingBag className="size-4" />,
+  };
+  return icons[type];
+}
+
+function getPaceIcon(pace: Pace): ReactNode {
+  const icons: Record<Pace, ReactNode> = {
+    chill: <Snail className="size-4" />,
+    steady: <Mountain className="size-4" />,
+    rocket: <Rocket className="size-4" />,
+  };
+  return icons[pace];
+}
+
 /* ----------------------------- MISSION ----------------------------- */
 
-const JOURNEY = [
-  { id: 1, label: "Contract Signed", icon: FileSignature, tint: "mint" as TintKey, status: "done" },
-  { id: 2, label: "Workspace Building", icon: Hammer, tint: "tangerine" as TintKey, status: "active" },
-  { id: 3, label: "Ready to Kickoff", icon: PartyPopper, tint: "lilac" as TintKey, status: "todo" },
+const JOURNEY: Array<{
+  id: number;
+  label: string;
+  icon: LucideIcon;
+  tint: TintKey;
+  status: "done" | "active" | "todo";
+}> = [
+  { id: 1, label: "Contract Signed", icon: FileSignature, tint: "mint", status: "done" },
+  { id: 2, label: "Workspace Building", icon: Hammer, tint: "tangerine", status: "active" },
+  { id: 3, label: "Ready to Kickoff", icon: PartyPopper, tint: "lilac", status: "todo" },
 ];
 
 function Mission({ onRestart }: { onRestart: () => void }) {
@@ -434,7 +483,7 @@ function Mission({ onRestart }: { onRestart: () => void }) {
         </div>
         <button
           onClick={onRestart}
-          className="text-sm font-bold text-muted-foreground hover:text-foreground rounded-full px-4 py-2 hover:bg-card transition-colors"
+          className="text-sm font-bold text-muted-foreground hover:text-foreground rounded-full px-4 py-2 hover:bg-card transition-all duration-200 active:scale-95"
         >
           ↺ Go Back and Edit
         </button>
@@ -483,14 +532,18 @@ function Mission({ onRestart }: { onRestart: () => void }) {
                       done || active ? "shadow-float" : "opacity-60"
                     }`}
                   >
-                    <Icon className="size-8" strokeWidth={2.3} />
+                    {/* Pulse ring for active step */}
+                    {active && (
+                      <div className="absolute inset-0 rounded-[26px] animate-pulse-ring pointer-events-none" />
+                    )}
+                    <Icon className="size-8 relative z-10" strokeWidth={2.3} />
                     {done && (
-                      <div className="absolute -top-1 -right-1 size-7 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-pop">
+                      <div className="absolute -top-1 -right-1 size-7 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-pop z-20">
                         <Check className="size-4" strokeWidth={3} />
                       </div>
                     )}
                     {active && (
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-extrabold uppercase tracking-wider rounded-full px-2.5 py-1 shadow-pop">
+                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-extrabold uppercase tracking-wider rounded-full px-2.5 py-1 shadow-pop z-20">
                         Now
                       </div>
                     )}
@@ -606,7 +659,7 @@ function BentoTile({
 
   return (
     <button
-      className={`${className} group squircle-lg p-5 text-left shadow-pop border border-border/40 flex flex-col justify-between relative overflow-hidden transition-all duration-300 ease-out hover:-translate-y-2 hover:rotate-[-1.5deg] hover:shadow-float ${tintBg(tint)} ${tintText(tint)} animate-pop-in`}
+      className={`${className} group squircle-lg p-5 text-left shadow-pop border border-border/40 flex flex-col justify-between relative overflow-hidden transition-all duration-300 ease-out hover:-translate-y-2 hover:rotate-[-1.5deg] hover:shadow-float active:scale-[0.98] active:hover:translate-y-0 ${tintBg(tint)} ${tintText(tint)} animate-pop-in`}
     >
       <div className="relative z-10 flex items-start justify-between">
         <div className="bg-background/40 backdrop-blur-sm rounded-2xl p-2.5 shadow-pop transition-transform group-hover:scale-110 group-hover:rotate-6">
@@ -618,12 +671,16 @@ function BentoTile({
         <div className="text-[11px] font-extrabold uppercase tracking-wider opacity-70">{eyebrow}</div>
         <div className="font-display font-extrabold text-xl sm:text-2xl leading-tight mt-0.5">{title}</div>
         <div className="text-sm opacity-80 mt-1 line-clamp-2">{desc}</div>
-        <div className="inline-flex items-center gap-1.5 mt-3 text-xs font-extrabold bg-background/50 rounded-full px-3 py-1.5">
+        <div className="inline-flex items-center gap-1.5 mt-3 text-xs font-extrabold bg-background/50 rounded-full px-3 py-1.5 transition-all group-hover:bg-background/70">
           {cta} <ArrowRight className="size-3.5" />
         </div>
       </div>
       {/* decorative blob */}
       <div className="absolute -bottom-10 -right-10 size-40 rounded-full bg-background/20 blur-xl pointer-events-none" />
+      {/* Watermark icon */}
+      <div className="absolute -bottom-4 -right-4 opacity-10 pointer-events-none [&_svg]:size-24 sm:[&_svg]:size-32">
+        {icon}
+      </div>
     </button>
   );
 }
