@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, type ReactNode } from "react";
 import {
+  Sparkles,
   Rocket,
   ArrowRight,
   ArrowLeft,
@@ -24,7 +25,6 @@ import {
   Smile,
   Building2,
   User,
-  Mail,
   type LucideIcon,
 } from "lucide-react";
 
@@ -56,7 +56,6 @@ function Index() {
 function Intake({ onLaunch }: { onLaunch: () => void }) {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
-  const [clientEmail, setClientEmail] = useState("");
   const [company, setCompany] = useState("");
   const [projectType, setProjectType] = useState<ProjectType | null>(null);
   const [pace, setPace] = useState<Pace | null>(null);
@@ -70,28 +69,13 @@ function Intake({ onLaunch }: { onLaunch: () => void }) {
   ] as const;
   const total = steps.length;
 
-  // Email validation helper
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
   const canNext =
-    (step === 0 && name.trim().length > 0 && isValidEmail(clientEmail)) ||
+    (step === 0 && name.trim().length > 0) ||
     (step === 1 && projectType !== null) ||
     (step === 2 && pace !== null) ||
     step === 3;
 
   const handleLaunch = () => {
-    // Prepare the final payload with all collected data
-    const payload = {
-      name,
-      client_email: clientEmail,
-      company,
-      projectType,
-      pace,
-    };
-    console.log("Launching project with payload:", payload);
     setLaunching(true);
     setTimeout(onLaunch, 900);
   };
@@ -101,11 +85,9 @@ function Intake({ onLaunch }: { onLaunch: () => void }) {
       <div className="w-full max-w-xl">
         {/* Brand */}
         <div className="flex items-center justify-center gap-2 mb-6">
-          <img
-            src="/Untitled_design.png"
-            alt="Onboardy logo"
-            className="size-11 animate-bouncy object-contain mix-blend-screen"
-          />
+          <div className="size-11 rounded-2xl bg-primary text-primary-foreground grid place-items-center shadow-float animate-bouncy">
+            <Sparkles className="size-6" strokeWidth={2.5} />
+          </div>
           <span className="font-display text-2xl font-extrabold tracking-tight">Onboardy</span>
         </div>
 
@@ -150,14 +132,6 @@ function Intake({ onLaunch }: { onLaunch: () => void }) {
                 placeholder="Ada Lovelace"
                 value={name}
                 onChange={setName}
-              />
-              <PlayfulInput
-                icon={<Mail className="size-5" />}
-                label="Email address"
-                placeholder="ada@example.com"
-                value={clientEmail}
-                onChange={setClientEmail}
-                type="email"
               />
               <PlayfulInput
                 icon={<Building2 className="size-5" />}
@@ -264,7 +238,6 @@ function Intake({ onLaunch }: { onLaunch: () => void }) {
             >
               <div className="bg-secondary squircle p-5 space-y-2.5 text-sm">
                 <Summary label="Name" value={name || "—"} />
-                <Summary label="Email" value={clientEmail || "—"} />
                 <Summary label="Company" value={company || "—"} />
                 <Summary
                   label="Project"
@@ -357,14 +330,12 @@ function PlayfulInput({
   placeholder,
   value,
   onChange,
-  type = "text",
 }: {
   icon: ReactNode;
   label: string;
   placeholder: string;
   value: string;
   onChange: (v: string) => void;
-  type?: "text" | "email";
 }) {
   return (
     <label className="block group">
@@ -374,7 +345,6 @@ function PlayfulInput({
           {icon}
         </div>
         <input
-          type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
@@ -506,11 +476,9 @@ function Mission({ onRestart }: { onRestart: () => void }) {
       {/* Top bar */}
       <header className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-2">
-          <img
-            src="/Untitled_design.png"
-            alt="Onboardy logo"
-            className="size-10 object-contain mix-blend-screen"
-          />
+          <div className="size-10 rounded-2xl bg-primary text-primary-foreground grid place-items-center shadow-float">
+            <Sparkles className="size-5" strokeWidth={2.5} />
+          </div>
           <span className="font-display text-xl font-extrabold">Onboardy</span>
         </div>
         <button
