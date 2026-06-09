@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, type ReactNode } from "react";
 import {
-  Sparkles,
   Rocket,
   ArrowRight,
   ArrowLeft,
@@ -102,9 +101,11 @@ function Intake({ onLaunch }: { onLaunch: () => void }) {
       <div className="w-full max-w-xl">
         {/* Brand */}
         <div className="flex items-center justify-center gap-2 mb-6">
-          <div className="size-11 rounded-2xl bg-primary text-primary-foreground grid place-items-center shadow-float animate-bouncy">
-            <Sparkles className="size-6" strokeWidth={2.5} />
-          </div>
+          <img
+            src="/Untitled_design.png"
+            alt="Onboardy logo"
+            className="size-11 animate-bouncy object-contain mix-blend-screen"
+          />
           <span className="font-display text-2xl font-extrabold tracking-tight">Onboardy</span>
         </div>
 
@@ -505,9 +506,11 @@ function Mission({ onRestart }: { onRestart: () => void }) {
       {/* Top bar */}
       <header className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-2">
-          <div className="size-10 rounded-2xl bg-primary text-primary-foreground grid place-items-center shadow-float">
-            <Sparkles className="size-5" strokeWidth={2.5} />
-          </div>
+          <img
+            src="/Untitled_design.png"
+            alt="Onboardy logo"
+            className="size-10 object-contain mix-blend-screen"
+          />
           <span className="font-display text-xl font-extrabold">Onboardy</span>
         </div>
         <button
